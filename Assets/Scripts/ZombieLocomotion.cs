@@ -44,7 +44,7 @@ public class ZombieLocomotion : MonoBehaviour
             Move();
         }
     }
-    public void Move()
+    void Move()
     {
         if (Vector3.Distance(transform.position, Squash.transform.position) > 25)
         {
@@ -58,7 +58,13 @@ public class ZombieLocomotion : MonoBehaviour
             Debug.Log(InPosition.ToString());
         }
     }
-    private void ResetZombie()
+    public void MoveTrigger()
+    {
+        anim.SetBool("Stop", false);
+        anim.SetTrigger("Move");
+        move = true;
+    }
+    public void ResetZombie()
     {
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
         transform.position = initPos;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,6 +10,8 @@ public class SquashLocomotion : MonoBehaviour
     [SerializeField] float timeOfFlight, timeofDescent;
     [SerializeField] float horizontalVelocity;
     [SerializeField] bool inPeak = false, canJump = false, canLaunch = false, startCount;
+    [SerializeField] GameObject PromptPanel;
+    [SerializeField] TextMeshProUGUI PromptTxt;
 
     public static UnityEvent InPeak = new UnityEvent();
     public static UnityEvent DescentHalfTime = new UnityEvent();
@@ -45,7 +48,7 @@ public class SquashLocomotion : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            horizontalVelocity = 10.12f;
+            ChangeVel();
         }
 
     }
@@ -114,5 +117,23 @@ public class SquashLocomotion : MonoBehaviour
                 SquashRb.constraints = RigidbodyConstraints.FreezeRotationY;
                 SquashRb.constraints = RigidbodyConstraints.FreezeRotationZ;
                 SquashRb.constraints = RigidbodyConstraints.FreezePositionZ;*/
+    }
+    public void ChangeVel()
+    {
+        horizontalVelocity = horizontalVelocity == 7.5f ? 10.12f : 7.5f;
+        StartCoroutine(ShowPrompt());
+
+    }
+    IEnumerator ShowPrompt()
+    {
+        PromptTxt.text ="Horizontal Velocity has been CHANGED. New Value = " + horizontalVelocity;
+        PromptPanel.SetActive(true);
+        yield return new WaitForSeconds(2);
+        PromptPanel.SetActive(false);
+    }
+    public void ResetTrigger()
+    {
+        ResetSquash();
+        ResetCam.Invoke();
     }
 }
