@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SquashLocomotion : MonoBehaviour
 {
     [SerializeField] float horizontalDisplacement, verticalDisplacement;
-    [SerializeField] float timeOfFlight, time;
+    [SerializeField] float timeOfFlight, timeofDescent;
     [SerializeField] float horizontalVelocity;
     [SerializeField] bool inPeak = false, canJump = false, canLaunch = false, startCount;
+
+    public static UnityEvent InPeak = new UnityEvent();
+    public static UnityEvent DescentHalfTime = new UnityEvent();
 
     private Rigidbody SquashRb;
     private Vector3 initPos;
@@ -25,7 +29,11 @@ public class SquashLocomotion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Mathf.CeilToInt(transform.position.y) == 30) inPeak = true;
+        if (Mathf.CeilToInt(transform.position.y) == 30)
+        {
+            inPeak = true;
+            InPeak.Invoke();
+        }
         if(Input.GetKeyDown(KeyCode.Backspace))
         {
             ResetSquash();
@@ -54,11 +62,16 @@ public class SquashLocomotion : MonoBehaviour
         }
         if (SquashRb.velocity.y < 0 && inPeak)
         {
-            time += Time.fixedDeltaTime;
+            timeofDescent += Time.fixedDeltaTime;
         }
         if (startCount)
         {
             timeOfFlight += Time.fixedDeltaTime;
+        }
+
+        if (timeofDescent > 1.235f)
+        {
+            DescentHalfTime.Invoke();
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -86,7 +99,7 @@ public class SquashLocomotion : MonoBehaviour
     }
     void ResetSquash()
     {
-        time = 0;
+        timeofDescent = 0;
         timeOfFlight = 0;
         SquashRb.velocity = Vector3.zero;
         transform.position = initPos;
