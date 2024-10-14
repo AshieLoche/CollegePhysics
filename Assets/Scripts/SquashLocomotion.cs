@@ -12,6 +12,7 @@ public class SquashLocomotion : MonoBehaviour
 
     public static UnityEvent InPeak = new UnityEvent();
     public static UnityEvent DescentHalfTime = new UnityEvent();
+    public static UnityEvent ResetCam = new UnityEvent();
 
     private Rigidbody SquashRb;
     private Vector3 initPos;
@@ -32,11 +33,11 @@ public class SquashLocomotion : MonoBehaviour
         if (Mathf.CeilToInt(transform.position.y) == 30)
         {
             inPeak = true;
-            InPeak.Invoke();
         }
         if(Input.GetKeyDown(KeyCode.Backspace))
         {
             ResetSquash();
+            ResetCam.Invoke();
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -69,7 +70,12 @@ public class SquashLocomotion : MonoBehaviour
             timeOfFlight += Time.fixedDeltaTime;
         }
 
-        if (timeofDescent > 1.235f)
+        if (timeOfFlight > 2.6f)
+        {
+            InPeak.Invoke();
+        }
+
+        if (timeofDescent > 1.8525f)
         {
             DescentHalfTime.Invoke();
         }
