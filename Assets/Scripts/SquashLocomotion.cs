@@ -19,6 +19,7 @@ public class SquashLocomotion : MonoBehaviour
         SquashRb = GetComponent<Rigidbody>();
         initPos = transform.position;
         ZombieLocomotion.InPosition.AddListener(StartJump);
+        horizontalVelocity = 7.5f;
     }
 
     // Update is called once per frame
@@ -33,6 +34,10 @@ public class SquashLocomotion : MonoBehaviour
         {
             ResetSquash();
         }
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            horizontalVelocity = 10.12f;
+        }
 
     }
     private void FixedUpdate()
@@ -44,7 +49,7 @@ public class SquashLocomotion : MonoBehaviour
         }
         if (SquashRb.velocity.y < 0 && canLaunch)
         {
-            SquashRb.velocity = new Vector3(7.5f,SquashRb.velocity.y);
+            SquashRb.velocity = new Vector3(horizontalVelocity,SquashRb.velocity.y);
             canLaunch = false;
         }
         if (SquashRb.velocity.y < 0 && inPeak)
@@ -66,6 +71,10 @@ public class SquashLocomotion : MonoBehaviour
                 startCount = false;
                 inPeak = false;
             }
+        }
+        if(collision.gameObject.tag == "Enemy")
+        {
+            collision.gameObject.GetComponent<Rigidbody>().isKinematic= false;
         }
     }
     void StartJump()
