@@ -13,8 +13,10 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        SetCameras();
         SquashLocomotion.InPeak.AddListener(ChangeTrajectoryView);
         SquashLocomotion.DescentHalfTime.AddListener(ChangeResultView);
+        SquashLocomotion.ResetCam.AddListener(SetCameras);
     }
 
     private void SetCameras()
