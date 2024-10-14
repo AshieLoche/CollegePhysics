@@ -854,6 +854,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Snow Pea
       objectReference: {fileID: 0}
+    - target: {fileID: 630337940443429896, guid: de649e29ba57895448cbeb08ae79c8d9,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2215084601525346145, guid: de649e29ba57895448cbeb08ae79c8d9,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -1083,13 +1088,25 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: -75511810279648594, guid: 119ea952bda91a347a953d82d96efb62, type: 3}
+--- !u!114 &764262236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764262230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b72f7e5f9682174b97071332b09d10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &815450386
 GameObject:
   m_ObjectHideFlags: 0
@@ -2703,6 +2720,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie_T-Pose
       objectReference: {fileID: 0}
+    - target: {fileID: 3265037317432396975, guid: 47fdb639051a1404fbe16b49cfc001aa,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2719,6 +2741,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 764262233}
+    - targetCorrespondingSourceObject: {fileID: 7949096304058085441, guid: 47fdb639051a1404fbe16b49cfc001aa,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 764262236}
   m_SourcePrefab: {fileID: 100100000, guid: 47fdb639051a1404fbe16b49cfc001aa, type: 3}
 --- !u!1 &1839842825
 GameObject:

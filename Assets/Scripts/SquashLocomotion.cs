@@ -72,10 +72,10 @@ public class SquashLocomotion : MonoBehaviour
                 inPeak = false;
             }
         }
-        if(collision.gameObject.tag == "Enemy")
-        {
-            collision.gameObject.GetComponent<Rigidbody>().isKinematic= false;
-        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        other.GetComponent<ZombieDeath>().Die();
     }
     void StartJump()
     {

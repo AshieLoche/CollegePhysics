@@ -60,6 +60,7 @@ public class ZombieLocomotion : MonoBehaviour
     }
     private void ResetZombie()
     {
+        gameObject.GetComponent<Rigidbody>().isKinematic = true;
         transform.position = initPos;
         anim.SetBool("Stop", true);
         move = false;
