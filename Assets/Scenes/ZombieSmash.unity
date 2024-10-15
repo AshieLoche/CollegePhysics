@@ -4878,6 +4878,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1805080829778399493, guid: 47fdb639051a1404fbe16b49cfc001aa,
+        type: 3}
+      propertyPath: m_Name
+      value: Zombie Body
+      objectReference: {fileID: 0}
     - target: {fileID: 2739436006716708373, guid: 47fdb639051a1404fbe16b49cfc001aa,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -4951,12 +4956,17 @@ PrefabInstance:
     - target: {fileID: 3265037317432396975, guid: 47fdb639051a1404fbe16b49cfc001aa,
         type: 3}
       propertyPath: m_Name
-      value: Zombie_T-Pose
+      value: Zombie
       objectReference: {fileID: 0}
     - target: {fileID: 3265037317432396975, guid: 47fdb639051a1404fbe16b49cfc001aa,
         type: 3}
       propertyPath: m_TagString
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7949096304058085441, guid: 47fdb639051a1404fbe16b49cfc001aa,
+        type: 3}
+      propertyPath: m_Name
+      value: Zombie Skin
       objectReference: {fileID: 0}
     - target: {fileID: 7949096304058085441, guid: 47fdb639051a1404fbe16b49cfc001aa,
         type: 3}
@@ -5293,7 +5303,8 @@ PrefabInstance:
       propertyPath: m_Constraints
       value: 120
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7463997718311965846, guid: 686e7fe86bcd28e4296033056cf1144e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1112983960481347523, guid: 686e7fe86bcd28e4296033056cf1144e,
