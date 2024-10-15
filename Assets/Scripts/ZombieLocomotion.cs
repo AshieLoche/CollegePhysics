@@ -12,12 +12,14 @@ public class ZombieLocomotion : MonoBehaviour
 
     public static UnityEvent InPosition = new UnityEvent();
 
-    private bool move = false;
+    private bool move = false, dead = false, taunt = false;
     Vector3 initPos;
 
     // Start is called before the first frame update
     void Start()
     {
+        SquashLocomotion.Taunt.AddListener(Taunt);
+        ZombieDeath.DeathState.AddListener(Dead);
         Squash = GameObject.FindGameObjectWithTag("Player");
         anim = GetComponent<Animator>();
         initPos = transform.position;
@@ -36,13 +38,18 @@ public class ZombieLocomotion : MonoBehaviour
         {
             ResetZombie();
         }
+
+        if (taunt && !dead)
+        {
+            StartCoroutine(ITaunt());
+        }
     }
     private void FixedUpdate()
     {
        if (move)
-        {
+       {
             Move();
-        }
+       }
     }
     void Move()
     {
@@ -70,5 +77,25 @@ public class ZombieLocomotion : MonoBehaviour
         transform.position = initPos;
         anim.SetBool("Stop", true);
         move = false;
+        dead = false;
+        taunt = false;
+    }
+
+    private void Dead()
+    {
+        dead = true;
+    }
+
+    private void Taunt()
+    {
+        taunt = true;
+    }
+
+    private IEnumerator ITaunt()
+    {
+        anim.SetBool("Stop", false);
+        anim.SetTrigger("Taunt");
+        anim.SetBool("Stop", true);
+        yield return new WaitForSeconds(3f);
     }
 }

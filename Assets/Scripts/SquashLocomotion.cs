@@ -9,13 +9,14 @@ public class SquashLocomotion : MonoBehaviour
     [SerializeField] float horizontalDisplacement, verticalDisplacement;
     [SerializeField] float timeOfFlight, timeofDescent;
     [SerializeField] float horizontalVelocity;
-    [SerializeField] bool inPeak = false, canJump = false, canLaunch = false, startCount;
+    [SerializeField] bool started = false, inPeak = false, canJump = false, canLaunch = false, startCount;
     [SerializeField] GameObject PromptPanel;
     [SerializeField] TextMeshProUGUI PromptTxt;
 
     public static UnityEvent InPeak = new UnityEvent();
     public static UnityEvent DescentHalfTime = new UnityEvent();
     public static UnityEvent ResetCam = new UnityEvent();
+    public static UnityEvent Taunt = new UnityEvent();
 
     private Rigidbody SquashRb;
     private Vector3 initPos;
@@ -33,6 +34,12 @@ public class SquashLocomotion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!started)
+        {
+            transform.position = initPos;
+            SquashRb.velocity = Vector3.zero;
+        }
+
         if (Mathf.CeilToInt(transform.position.y) == 30)
         {
             inPeak = true;
@@ -92,15 +99,20 @@ public class SquashLocomotion : MonoBehaviour
             {
                 startCount = false;
                 inPeak = false;
+                Taunt.Invoke();
             }
         }
     }
     private void OnTriggerEnter(Collider other)
     {
-        other.GetComponent<ZombieDeath>().Die();
+        if (other.CompareTag("Enemy"))
+        {
+            other.GetComponent<ZombieDeath>().Die();
+        }
     }
     void StartJump()
     {
+        started = true;
         canJump = true;
         startCount = true;
         canLaunch = true;
@@ -122,11 +134,10 @@ public class SquashLocomotion : MonoBehaviour
     {
         horizontalVelocity = horizontalVelocity == 7.5f ? 10.12f : 7.5f;
         StartCoroutine(ShowPrompt());
-
     }
     IEnumerator ShowPrompt()
     {
-        PromptTxt.text ="Horizontal Velocity has been CHANGED. New Value = " + horizontalVelocity;
+        PromptTxt.text = "Horizontal Velocity has been CHANGED. New Value = " + horizontalVelocity;
         PromptPanel.SetActive(true);
         yield return new WaitForSeconds(2);
         PromptPanel.SetActive(false);
