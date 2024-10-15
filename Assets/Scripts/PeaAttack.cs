@@ -21,7 +21,9 @@ public class PeaAttack : MonoBehaviour
     private IEnumerator IFirePea()
     {
         isFiring = true;
-        Instantiate(_peaPF, _peaSpawnMarker).GetComponent<Rigidbody>().velocity = transform.forward * _velocity;
+        GameObject _peaClone = Instantiate(_peaPF, _peaSpawnMarker, true);
+        _peaClone.transform.position = _peaSpawnMarker.position;
+        _peaClone.GetComponent<Rigidbody>().velocity = transform.forward * _velocity;
         yield return new WaitForSeconds(2f);
         isFiring = false;
     }

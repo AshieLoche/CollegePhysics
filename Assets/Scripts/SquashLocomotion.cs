@@ -137,7 +137,7 @@ public class SquashLocomotion : MonoBehaviour
     }
     IEnumerator ShowPrompt()
     {
-        PromptTxt.text = "Horizontal Velocity has been CHANGED. New Value = " + horizontalVelocity;
+        PromptTxt.text = $"Horizontal Velocity has been CHANGED. New Value = {horizontalVelocity} m/s";
         PromptPanel.SetActive(true);
         yield return new WaitForSeconds(2);
         PromptPanel.SetActive(false);

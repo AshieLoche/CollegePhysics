@@ -20,4 +20,5 @@ public class ZombieDeath : MonoBehaviour
         anim.SetTrigger("Dead");
         DeathState.Invoke();
     }
+
 }
