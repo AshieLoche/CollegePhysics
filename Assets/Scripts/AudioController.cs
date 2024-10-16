@@ -128,6 +128,7 @@ public class AudioController : MonoBehaviour
     private void HitPea(string status)
     {
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Pea Hit");
+        AudioSource soundEffect2 = _soundEffects.Find((value) => value.name == "Pea Hit 2");
         List<AudioClip> _regularPeaHits = _peaHits.FindAll((value) => value.name.Contains("splat"));
         AudioClip _frozenPeaHit = _peaHits.Find((value) => value.name == "frozen");
 
@@ -136,8 +137,8 @@ public class AudioController : MonoBehaviour
 
         if (status.Contains("Snow"))
         {
-            soundEffect.clip = _frozenPeaHit;
-            soundEffect.Play();
+            soundEffect2.clip = _frozenPeaHit;
+            soundEffect2.Play();
         }
     }
 

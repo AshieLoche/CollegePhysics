@@ -8,6 +8,7 @@ public class PeaFire : MonoBehaviour
     [SerializeField] private GameObject _peaPF;
     [SerializeField] private Transform _peaSpawnMarker;
     [SerializeField] private float _velocity;
+    [SerializeField] private float _rechargeTime;
     private bool _isFiring;
 
     public static UnityEvent FirePea = new UnityEvent();
@@ -27,7 +28,7 @@ public class PeaFire : MonoBehaviour
         _peaClone.transform.position = _peaSpawnMarker.position;
         _peaClone.GetComponent<Rigidbody>().velocity = transform.forward * _velocity;
         FirePea.Invoke();
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(_rechargeTime);
         _isFiring = false;
     }
 
