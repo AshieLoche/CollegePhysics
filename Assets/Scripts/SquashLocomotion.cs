@@ -17,6 +17,11 @@ public class SquashLocomotion : MonoBehaviour
     public static UnityEvent DescentHalfTime = new UnityEvent();
     public static UnityEvent ResetCam = new UnityEvent();
     public static UnityEvent Taunt = new UnityEvent();
+    public static UnityEvent<float> ResetUI = new UnityEvent<float>();
+    public static UnityEvent<float> Prompt = new UnityEvent<float>();
+    public static UnityEvent<float> HorizontalVelocity = new UnityEvent<float>();
+    public static UnityEvent<float> AttackTime = new UnityEvent<float>();
+    public static UnityEvent<float> AttackRange = new UnityEvent<float>();
 
     private Rigidbody SquashRb;
     private Vector3 initPos;
@@ -27,8 +32,9 @@ public class SquashLocomotion : MonoBehaviour
         Physics.gravity.Set(0,-9.8f,0);
         SquashRb = GetComponent<Rigidbody>();
         initPos = transform.position;
-        ZombieLocomotion.InPosition.AddListener(StartJump);
         horizontalVelocity = 7.5f;
+        HorizontalVelocity.Invoke(horizontalVelocity);
+        ZombieLocomotion.InPosition.AddListener(StartJump);
     }
 
     // Update is called once per frame
@@ -78,6 +84,8 @@ public class SquashLocomotion : MonoBehaviour
         if (startCount)
         {
             timeOfFlight += Time.fixedDeltaTime;
+            AttackTime.Invoke(Mathf.Round(timeOfFlight * 100) / 100);
+            AttackRange.Invoke(Mathf.Round(SquashRb.position.x * 100) / 100);
         }
 
         if (timeOfFlight > 2.6f)
@@ -133,18 +141,13 @@ public class SquashLocomotion : MonoBehaviour
     public void ChangeVel()
     {
         horizontalVelocity = horizontalVelocity == 7.5f ? 10.12f : 7.5f;
-        StartCoroutine(ShowPrompt());
-    }
-    IEnumerator ShowPrompt()
-    {
-        PromptTxt.text = $"Horizontal Velocity has been CHANGED. New Value = {horizontalVelocity} m/s";
-        PromptPanel.SetActive(true);
-        yield return new WaitForSeconds(2);
-        PromptPanel.SetActive(false);
+        Prompt.Invoke(horizontalVelocity);
+        HorizontalVelocity.Invoke(horizontalVelocity);
     }
     public void ResetTrigger()
     {
         ResetSquash();
         ResetCam.Invoke();
+        ResetUI.Invoke(horizontalVelocity);
     }
 }
