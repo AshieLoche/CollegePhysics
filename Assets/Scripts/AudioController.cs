@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AudioController : MonoBehaviour
@@ -18,11 +19,14 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioClip _zombieGulp;
     [SerializeField] private List<AudioClip> _zombieDeaths;
     [SerializeField] private List<AudioClip> _gameStates;
+    [SerializeField] private List<AudioClip> _buttons;
+    [SerializeField] private AudioClip _waveStart;
 
     private int _bmIndex;
     private int _previousBMIndex;
     private bool _isGroaning = false;
     private bool _isWalking = false;
+    private bool _gameState = false;
     private bool _dead = false;
 
     private void Start()
@@ -74,7 +78,7 @@ public class AudioController : MonoBehaviour
 
     private IEnumerator IZombieGoran()
     {
-        if (!_dead)
+        if (!_dead && !_gameState)
         {
             _isGroaning = true;
             yield return new WaitForSeconds(Random.Range(5f, 7.5f));
@@ -138,8 +142,16 @@ public class AudioController : MonoBehaviour
     private void FirePea()
     {
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Pea Fire");
-        soundEffect.clip = _peaFires[Random.Range(0, _peaFires.Count)];
-        soundEffect.Play();
+
+        if (!_gameState)
+        {
+            soundEffect.clip = _peaFires[Random.Range(0, _peaFires.Count)];
+            soundEffect.Play();
+        }
+        else
+        {
+            soundEffect.Stop();
+        }
     }
 
     private void HitPea(string status)
@@ -149,13 +161,21 @@ public class AudioController : MonoBehaviour
         List<AudioClip> regularPeaHits = _peaHits.FindAll((value) => value.name.Contains("splat"));
         AudioClip frozenPeaHit = _peaHits.Find((value) => value.name == "frozen");
 
-        soundEffect.clip = regularPeaHits[Random.Range(0, regularPeaHits.Count)];
-        soundEffect.Play();
-
-        if (status.Contains("Snow"))
+        if (!_gameState)
         {
-            soundEffect2.clip = frozenPeaHit;
-            soundEffect2.Play();
+            soundEffect.clip = regularPeaHits[Random.Range(0, regularPeaHits.Count)];
+            soundEffect.Play();
+
+            if (status.Contains("Snow"))
+            {
+                soundEffect2.clip = frozenPeaHit;
+                soundEffect2.Play();
+            }
+        }
+        else
+        {
+            soundEffect.Stop();
+            soundEffect2.Stop();
         }
     }
 
@@ -189,6 +209,7 @@ public class AudioController : MonoBehaviour
     {
         yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
 
+        _gameState = true;
         _backgroundMusic.Pause();
 
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
@@ -197,12 +218,14 @@ public class AudioController : MonoBehaviour
 
         yield return new WaitUntil(() => soundEffect.time >= soundEffect.clip.length);
         _backgroundMusic.UnPause();
+        _gameState = false;
     }
 
     private IEnumerator IWin(AudioSource previousSoundEffect)
     {
         yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
 
+        _gameState = true;
         _backgroundMusic.Pause();
 
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
@@ -211,14 +234,57 @@ public class AudioController : MonoBehaviour
 
         yield return new WaitUntil(() => soundEffect.time >= soundEffect.clip.length);
         _backgroundMusic.UnPause();
+        _gameState = false;
+    }
+
+    public void StartButton()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Button");
+        soundEffect.clip = _buttons.Find((value) => value.name == "buttonclick");
+        soundEffect.Play();
+
+        StartCoroutine(WaveStart(soundEffect));
+    }
+
+    private IEnumerator WaveStart(AudioSource previousSoundEffect)
+    {
+        yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
+
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Wave Start");
+        soundEffect.clip = _waveStart;
+        soundEffect.Play();
+    }
+
+    public void ChangeVelocityButton()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Button");
+        soundEffect.clip = _buttons.Find((value) => value.name == "pause");
+        soundEffect.Play();
+    }
+
+    public void ResetButton()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Button");
+        soundEffect.clip = _buttons.Find((value) => value.name == "buzzer");
+        soundEffect.Play(); 
+    }
+
+    public void ExitButton()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Button");
+        soundEffect.clip = _buttons.Find((value) => value.name == "gravebutton");
+        soundEffect.Play();
     }
 
     public void ResetAudio()
     {
         _isGroaning = false;
         _isWalking = false;
+        _gameState = false;
         _dead = false;
     }
+
+
 
     private AudioClip ReverseClip(AudioClip clip)
     {
