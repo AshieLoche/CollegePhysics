@@ -3,7 +3,12 @@ using UnityEngine;
 public class ButtonsManager : MonoBehaviour
 {
 
-    public void ExitApp()
+    private void Start()
+    {
+        AudioController.ExitApp.AddListener(ExitApp);
+    }
+
+    private void ExitApp()
     {
         Application.Quit();
     }

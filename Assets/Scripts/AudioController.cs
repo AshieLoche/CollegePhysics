@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AudioController : MonoBehaviour
 {
@@ -28,6 +27,8 @@ public class AudioController : MonoBehaviour
     private bool _isWalking = false;
     private bool _gameState = false;
     private bool _dead = false;
+
+    public static UnityEvent ExitApp = new UnityEvent();
 
     private void Start()
     {
@@ -78,15 +79,21 @@ public class AudioController : MonoBehaviour
 
     private IEnumerator IZombieGoran()
     {
+        _isGroaning = true;
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Groan");
+
         if (!_dead && !_gameState)
         {
-            _isGroaning = true;
             yield return new WaitForSeconds(Random.Range(5f, 7.5f));
-            AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Groan");
             soundEffect.clip = _zombieGroans[Random.Range(0, _zombieGroans.Count)];
             soundEffect.Play();
-            _isGroaning = false;
         }
+        else
+        {
+            soundEffect.Pause();
+        }
+
+        _isGroaning = false;
     }
 
     private void ZombieWalk(bool status)
@@ -176,6 +183,7 @@ public class AudioController : MonoBehaviour
         {
             soundEffect.Stop();
             soundEffect2.Stop();
+            Debug.Log(soundEffect2.isPlaying);
         }
     }
 
@@ -274,6 +282,14 @@ public class AudioController : MonoBehaviour
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Button");
         soundEffect.clip = _buttons.Find((value) => value.name == "gravebutton");
         soundEffect.Play();
+
+        StartCoroutine(IExitApp(soundEffect));
+    }
+
+    private IEnumerator IExitApp(AudioSource previousSoundEffect)
+    {
+        yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
+        ExitApp.Invoke();
     }
 
     public void ResetAudio()

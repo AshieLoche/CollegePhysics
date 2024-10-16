@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -35,7 +33,7 @@ public class SunflowerDeath : MonoBehaviour
 
     private void Damage()
     {
-        _hp -= 50f;
+        _hp -= 10f;
     }
 
 }
