@@ -15,6 +15,7 @@ public class SquashLocomotion : MonoBehaviour
     public static UnityEvent InPeak = new UnityEvent();
     public static UnityEvent DescentThreeQuarters = new UnityEvent();
     public static UnityEvent Taunt = new UnityEvent();
+    public static UnityEvent<string> Fly = new UnityEvent<string>();
     public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
     public static UnityEvent<float> ResetUI = new UnityEvent<float>();
     public static UnityEvent<float> Prompt = new UnityEvent<float>();
@@ -66,11 +67,13 @@ public class SquashLocomotion : MonoBehaviour
     {
         if (canJump)
         {
+            Fly.Invoke("Flying");
             SquashRb.velocity = new Vector3(0, Mathf.Sqrt(2 * 9.8f * 30));
             canJump = false;
         }
         if (SquashRb.velocity.y < 0 && canLaunch)
         {
+            Fly.Invoke("Falling");
             SquashRb.velocity = new Vector3(horizontalVelocity,SquashRb.velocity.y);
             canLaunch = false;
         }
@@ -102,6 +105,7 @@ public class SquashLocomotion : MonoBehaviour
             /*SquashRb.constraints = RigidbodyConstraints.FreezeAll;*/
             if (collision.gameObject.tag == "Ground")
             {
+                Fly.Invoke("Landing");
                 startCount = false;
                 inPeak = false;
                 Taunt.Invoke();

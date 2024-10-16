@@ -9,6 +9,7 @@ public class ZombieLocomotion : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] [Range(0f, 1f)] float speedModifier = 1;
 
+    public static UnityEvent<bool> Walk = new UnityEvent<bool>();
     public static UnityEvent InPosition = new UnityEvent();
     public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
 
@@ -56,12 +57,14 @@ public class ZombieLocomotion : MonoBehaviour
         if (Vector3.Distance(transform.position, Squash.transform.position) > 25)
         {
             transform.position = Vector3.MoveTowards(transform.position, Squash.transform.position, Time.fixedDeltaTime*speedModifier);
+            Walk.Invoke(true);
         }
         else if (Vector3.Distance(transform.position, Squash.transform.position) <= 25)
         {
             move = false;
             anim.SetBool("Stop", true);
             InPosition.Invoke();
+            Walk.Invoke(false);
         }
     }
 

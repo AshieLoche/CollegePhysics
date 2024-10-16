@@ -1,30 +1,34 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class PeaAttack : MonoBehaviour
+public class PeaFire : MonoBehaviour
 {
 
     [SerializeField] private GameObject _peaPF;
     [SerializeField] private Transform _peaSpawnMarker;
     [SerializeField] private float _velocity;
-    private bool isFiring;
+    private bool _isFiring;
+
+    public static UnityEvent FirePea = new UnityEvent();
 
     private void Update()
     {
-        if (!isFiring && Physics.Raycast(transform.position, transform.forward, 10f, 1 << LayerMask.NameToLayer("Squash")))
+        if (!_isFiring && Physics.Raycast(transform.position, transform.forward, 10f, 1 << LayerMask.NameToLayer("Squash")))
         {
-            StartCoroutine(IFirePea());
+            StartCoroutine(IPeaFire());
         }
     }
 
-    private IEnumerator IFirePea()
+    private IEnumerator IPeaFire()
     {
-        isFiring = true;
+        _isFiring = true;
         GameObject _peaClone = Instantiate(_peaPF, _peaSpawnMarker, true);
         _peaClone.transform.position = _peaSpawnMarker.position;
         _peaClone.GetComponent<Rigidbody>().velocity = transform.forward * _velocity;
+        FirePea.Invoke();
         yield return new WaitForSeconds(2f);
-        isFiring = false;
+        _isFiring = false;
     }
 
 }

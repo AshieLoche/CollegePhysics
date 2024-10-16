@@ -7,24 +7,25 @@ using UnityEngine.Events;
 public class UIManager : MonoBehaviour
 {
 
-    [SerializeField] private Transform _alert;
+    [SerializeField] private Transform _squashAlert;
     [SerializeField] private GameObject _titlePanel;
     [SerializeField] private GameObject _promptPanel;
     [SerializeField] private TextMeshProUGUI _promptTxt;
     [SerializeField] private TextMeshProUGUI _horizontalVelocityUI;
     [SerializeField] private TextMeshProUGUI _attackTimeUI;
     [SerializeField] private TextMeshProUGUI _attackRangeUI;
-    private Sequence _alertSequence;
+    private Sequence _squashAlertSequence;
     private Vector3 _originalPosition;
     private Vector3 _targetPosition;
     private float _originalScale;
     private float _targetScale;
 
+    public static UnityEvent Alert = new UnityEvent();
     public static UnityEvent Alerted = new UnityEvent();
 
     void Start()
     {
-        ZombieLocomotion.InPosition.AddListener(Alert);
+        ZombieLocomotion.InPosition.AddListener(SquashAlert);
         ZombieLocomotion.DisplayTitleUI.AddListener(DisplayTitle);
         SquashLocomotion.DisplayTitleUI.AddListener(DisplayTitle);
         SquashLocomotion.Prompt.AddListener(ShowPrompt);
@@ -33,24 +34,25 @@ public class UIManager : MonoBehaviour
         SquashLocomotion.AttackRange.AddListener(ShowAttackRange);
         SquashLocomotion.ResetUI.AddListener(ResetUI);
 
-        _originalPosition = _alert.localPosition;
+        _originalPosition = _squashAlert.localPosition;
         _targetPosition = Vector3.zero;
-        _originalScale = _alert.localScale.magnitude;
+        _originalScale = _squashAlert.localScale.magnitude;
         _targetScale = 1f;
     }
 
-    private void Alert()
+    private void SquashAlert()
     {
-        _alert.gameObject.SetActive(true);
-        _alertSequence = DOTween.Sequence();
-        _alertSequence.Append(_alert.DOScale(_targetScale, 0.5f));
-        _alertSequence.Join(_alert.DOLocalMove(_targetPosition, 0.5f));
-        _alertSequence.Append(_alert.DOPunchPosition(new Vector3(0.5f, 0.5f, 0.5f), 1f));
-        _alertSequence.Append(_alert.DOScale(_originalScale, 0.5f));
-        _alertSequence.Join(_alert.DOLocalMove(_originalPosition, 0.5f));
-        _alertSequence.OnComplete(() =>
+        Alert.Invoke();
+        _squashAlert.gameObject.SetActive(true);
+        _squashAlertSequence = DOTween.Sequence();
+        _squashAlertSequence.Append(_squashAlert.DOScale(_targetScale, 0.5f));
+        _squashAlertSequence.Join(_squashAlert.DOLocalMove(_targetPosition, 0.5f));
+        _squashAlertSequence.Append(_squashAlert.DOPunchPosition(new Vector3(0.5f, 0.5f, 0.5f), 1f));
+        _squashAlertSequence.Append(_squashAlert.DOScale(_originalScale, 0.5f));
+        _squashAlertSequence.Join(_squashAlert.DOLocalMove(_originalPosition, 0.5f));
+        _squashAlertSequence.OnComplete(() =>
         {
-            _alert.gameObject.SetActive(false);
+            _squashAlert.gameObject.SetActive(false);
             Alerted.Invoke();
         });
     }
