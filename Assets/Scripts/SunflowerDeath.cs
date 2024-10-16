@@ -18,7 +18,7 @@ public class SunflowerDeath : MonoBehaviour
 
     private void Update()
     {
-        if (_hp == 0f && !_dead)
+        if (_hp <= 0f && !_dead)
         {
             DeathState.Invoke();
             _dead = true;
@@ -35,7 +35,7 @@ public class SunflowerDeath : MonoBehaviour
 
     private void Damage()
     {
-        _hp -= 10f;
+        _hp -= 50f;
     }
 
 }

@@ -23,6 +23,7 @@ public class AudioController : MonoBehaviour
     private int _previousBMIndex;
     private bool _isGroaning = false;
     private bool _isWalking = false;
+    private bool _dead = false;
 
     private void Start()
     {
@@ -63,16 +64,25 @@ public class AudioController : MonoBehaviour
         {
             StartCoroutine(IZombieGoran());
         }
+        
+        if (_dead)
+        {
+            _isGroaning = false;
+            StopCoroutine(IZombieGoran());
+        }
     }
 
     private IEnumerator IZombieGoran()
     {
-        _isGroaning = true;
-        yield return new WaitForSeconds(Random.Range(5f, 7.5f));
-        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Groan");
-        soundEffect.clip = _zombieGroans[Random.Range(0, _zombieGroans.Count)];
-        soundEffect.Play();
-        _isGroaning = false;
+        if (!_dead)
+        {
+            _isGroaning = true;
+            yield return new WaitForSeconds(Random.Range(5f, 7.5f));
+            AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Groan");
+            soundEffect.clip = _zombieGroans[Random.Range(0, _zombieGroans.Count)];
+            soundEffect.Play();
+            _isGroaning = false;
+        }
     }
 
     private void ZombieWalk(bool status)
@@ -167,6 +177,7 @@ public class AudioController : MonoBehaviour
 
     private void ZombieDead()
     {
+        _dead = true;
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Death");
         soundEffect.clip = _zombieDeaths[Random.Range(0, _zombieDeaths.Count)];
         soundEffect.Play();
@@ -178,18 +189,35 @@ public class AudioController : MonoBehaviour
     {
         yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
 
+        _backgroundMusic.Pause();
+
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
         soundEffect.clip = _gameStates.Find((value) => value.name.Contains("lose"));
         soundEffect.Play();
+
+        yield return new WaitUntil(() => soundEffect.time >= soundEffect.clip.length);
+        _backgroundMusic.UnPause();
     }
 
     private IEnumerator IWin(AudioSource previousSoundEffect)
     {
         yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
 
+        _backgroundMusic.Pause();
+
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
         soundEffect.clip = _gameStates.Find((value) => value.name.Contains("win"));
         soundEffect.Play();
+
+        yield return new WaitUntil(() => soundEffect.time >= soundEffect.clip.length);
+        _backgroundMusic.UnPause();
+    }
+
+    public void ResetAudio()
+    {
+        _isGroaning = false;
+        _isWalking = false;
+        _dead = false;
     }
 
     private AudioClip ReverseClip(AudioClip clip)

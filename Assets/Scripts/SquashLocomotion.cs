@@ -133,6 +133,11 @@ public class SquashLocomotion : MonoBehaviour
         timeOfFlight = 0;
         SquashRb.velocity = Vector3.zero;
         transform.position = initPos;
+        started = false;
+        canJump = false;
+        startCount = false;
+        canLaunch = false;
+        inPeak = false;
         /*        SquashRb.constraints = RigidbodyConstraints.None;
                 SquashRb.constraints = RigidbodyConstraints.FreezeRotationX;
                 SquashRb.constraints = RigidbodyConstraints.FreezeRotationY;

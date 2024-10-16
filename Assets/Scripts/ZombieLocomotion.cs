@@ -14,7 +14,7 @@ public class ZombieLocomotion : MonoBehaviour
     public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
     public static UnityEvent ZombieAttack = new UnityEvent();
 
-    private bool move = false, dead = false, attack = false, targetDead = false;
+    private bool move = false, dead = false, attack = false, attacking = false,targetDead = false;
     Vector3 initPos;
 
     void Start()
@@ -40,7 +40,7 @@ public class ZombieLocomotion : MonoBehaviour
             ResetZombie();
         }
 
-        if (attack && !dead && !targetDead)
+        if (attack && !attacking && !dead && !targetDead)
         {
             StartCoroutine(IAttack());
         }
@@ -85,13 +85,14 @@ public class ZombieLocomotion : MonoBehaviour
         anim.SetBool("Stop", true);
         if (!dead)
         {
-            anim.Play("root_Zombie_Idle", -1);
-            anim.ResetTrigger("Attack");
             StopCoroutine(IAttack());
+            anim.ResetTrigger("Attack");
+            anim.Play("root_Zombie_Idle", -1);
         }
         move = false;
         dead = false;
         attack = false;
+        attacking = false;
         targetDead = false;
     }
 
@@ -108,6 +109,7 @@ public class ZombieLocomotion : MonoBehaviour
     private void StopAttack()
     {
         attack = false;
+        attacking = false;
         targetDead = true;
         StopCoroutine(IAttack());
         anim.ResetTrigger("Attack");
@@ -115,12 +117,12 @@ public class ZombieLocomotion : MonoBehaviour
 
     private IEnumerator IAttack()
     {
-        attack = false;
+        attacking = true;
         anim.SetTrigger("Attack");
         anim.Play("root|Zombie_Attack", -1);
         ZombieAttack.Invoke();
         yield return new WaitForSeconds(3f);
-        attack = true;
+        attacking = false;
     }
 
 }
