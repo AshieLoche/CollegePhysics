@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -15,11 +13,10 @@ public class CameraController : MonoBehaviour
     {
         SetCameras();
         SquashLocomotion.InPeak.AddListener(ChangeTrajectoryView);
-        SquashLocomotion.DescentHalfTime.AddListener(ChangeResultView);
-        SquashLocomotion.ResetCam.AddListener(SetCameras);
+        SquashLocomotion.DescentThreeQuarters.AddListener(ChangeResultView);
     }
 
-    private void SetCameras()
+    public void SetCameras()
     {
         _squashFrontCam.gameObject.SetActive(true);
         _squashSideCam.gameObject.SetActive(false);

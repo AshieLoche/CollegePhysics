@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class SquashLocomotion : MonoBehaviour
 {
+
     [SerializeField] float horizontalDisplacement, verticalDisplacement;
     [SerializeField] float timeOfFlight, timeofDescent;
     [SerializeField] float horizontalVelocity;
@@ -14,9 +13,9 @@ public class SquashLocomotion : MonoBehaviour
     [SerializeField] TextMeshProUGUI PromptTxt;
 
     public static UnityEvent InPeak = new UnityEvent();
-    public static UnityEvent DescentHalfTime = new UnityEvent();
-    public static UnityEvent ResetCam = new UnityEvent();
+    public static UnityEvent DescentThreeQuarters = new UnityEvent();
     public static UnityEvent Taunt = new UnityEvent();
+    public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
     public static UnityEvent<float> ResetUI = new UnityEvent<float>();
     public static UnityEvent<float> Prompt = new UnityEvent<float>();
     public static UnityEvent<float> HorizontalVelocity = new UnityEvent<float>();
@@ -26,7 +25,6 @@ public class SquashLocomotion : MonoBehaviour
     private Rigidbody SquashRb;
     private Vector3 initPos;
 
-    // Start is called before the first frame update
     void Start()
     {
         Physics.gravity.Set(0,-9.8f,0);
@@ -34,10 +32,9 @@ public class SquashLocomotion : MonoBehaviour
         initPos = transform.position;
         horizontalVelocity = 7.5f;
         HorizontalVelocity.Invoke(horizontalVelocity);
-        ZombieLocomotion.InPosition.AddListener(StartJump);
+        UIManager.Alerted.AddListener(StartJump);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!started)
@@ -53,7 +50,6 @@ public class SquashLocomotion : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Backspace))
         {
             ResetSquash();
-            ResetCam.Invoke();
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -65,9 +61,10 @@ public class SquashLocomotion : MonoBehaviour
         }
 
     }
+
     private void FixedUpdate()
     {
-        if(canJump)
+        if (canJump)
         {
             SquashRb.velocity = new Vector3(0, Mathf.Sqrt(2 * 9.8f * 30));
             canJump = false;
@@ -95,7 +92,7 @@ public class SquashLocomotion : MonoBehaviour
 
         if (timeofDescent > 1.8525f)
         {
-            DescentHalfTime.Invoke();
+            DescentThreeQuarters.Invoke();
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -108,6 +105,7 @@ public class SquashLocomotion : MonoBehaviour
                 startCount = false;
                 inPeak = false;
                 Taunt.Invoke();
+                DisplayTitleUI.Invoke(true);
             }
         }
     }
@@ -124,7 +122,6 @@ public class SquashLocomotion : MonoBehaviour
         canJump = true;
         startCount = true;
         canLaunch = true;
-        Debug.Log("Start Jumping!");
     }
     void ResetSquash()
     {
@@ -142,12 +139,11 @@ public class SquashLocomotion : MonoBehaviour
     {
         horizontalVelocity = horizontalVelocity == 7.5f ? 10.12f : 7.5f;
         Prompt.Invoke(horizontalVelocity);
-        HorizontalVelocity.Invoke(horizontalVelocity);
     }
     public void ResetTrigger()
     {
         ResetSquash();
-        ResetCam.Invoke();
         ResetUI.Invoke(horizontalVelocity);
     }
+
 }

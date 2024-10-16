@@ -1,21 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class ZombieLocomotion : MonoBehaviour
 {
+
     [SerializeField] GameObject Squash;
     [SerializeField] Animator anim;
-    [SerializeField]
-    [Range(0f, 1f)] float speedModifier = 1;
+    [SerializeField] [Range(0f, 1f)] float speedModifier = 1;
 
     public static UnityEvent InPosition = new UnityEvent();
+    public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
 
     private bool move = false, dead = false, taunt = false;
     Vector3 initPos;
 
-    // Start is called before the first frame update
     void Start()
     {
         SquashLocomotion.Taunt.AddListener(Taunt);
@@ -25,7 +24,6 @@ public class ZombieLocomotion : MonoBehaviour
         initPos = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && move == false)
@@ -44,6 +42,7 @@ public class ZombieLocomotion : MonoBehaviour
             StartCoroutine(ITaunt());
         }
     }
+
     private void FixedUpdate()
     {
        if (move)
@@ -51,6 +50,7 @@ public class ZombieLocomotion : MonoBehaviour
             Move();
        }
     }
+
     void Move()
     {
         if (Vector3.Distance(transform.position, Squash.transform.position) > 25)
@@ -62,20 +62,28 @@ public class ZombieLocomotion : MonoBehaviour
             move = false;
             anim.SetBool("Stop", true);
             InPosition.Invoke();
-            Debug.Log(InPosition.ToString());
         }
     }
+
     public void MoveTrigger()
     {
         anim.SetBool("Stop", false);
         anim.SetTrigger("Move");
         move = true;
+        DisplayTitleUI.Invoke(false);
     }
+
     public void ResetZombie()
     {
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
         transform.position = initPos;
         anim.SetBool("Stop", true);
+        if (!dead)
+        {
+            anim.Play("root_Zombie_Idle", -1);
+            anim.ResetTrigger("Taunt");
+            StopCoroutine(ITaunt());
+        }
         move = false;
         dead = false;
         taunt = false;
@@ -98,4 +106,5 @@ public class ZombieLocomotion : MonoBehaviour
         anim.SetBool("Stop", true);
         yield return new WaitForSeconds(3f);
     }
+
 }
