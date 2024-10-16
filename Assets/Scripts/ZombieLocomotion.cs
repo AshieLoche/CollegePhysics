@@ -12,14 +12,16 @@ public class ZombieLocomotion : MonoBehaviour
     public static UnityEvent<bool> Walk = new UnityEvent<bool>();
     public static UnityEvent InPosition = new UnityEvent();
     public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
+    public static UnityEvent ZombieAttack = new UnityEvent();
 
-    private bool move = false, dead = false, taunt = false;
+    private bool move = false, dead = false, attack = false, targetDead = false;
     Vector3 initPos;
 
     void Start()
     {
-        SquashLocomotion.Taunt.AddListener(Taunt);
+        SquashLocomotion.Attack.AddListener(Attack);
         ZombieDeath.DeathState.AddListener(Dead);
+        SunflowerDeath.DeathState.AddListener(StopAttack);
         Squash = GameObject.FindGameObjectWithTag("Player");
         anim = GetComponent<Animator>();
         initPos = transform.position;
@@ -38,9 +40,9 @@ public class ZombieLocomotion : MonoBehaviour
             ResetZombie();
         }
 
-        if (taunt && !dead)
+        if (attack && !dead && !targetDead)
         {
-            StartCoroutine(ITaunt());
+            StartCoroutine(IAttack());
         }
     }
 
@@ -84,12 +86,13 @@ public class ZombieLocomotion : MonoBehaviour
         if (!dead)
         {
             anim.Play("root_Zombie_Idle", -1);
-            anim.ResetTrigger("Taunt");
-            StopCoroutine(ITaunt());
+            anim.ResetTrigger("Attack");
+            StopCoroutine(IAttack());
         }
         move = false;
         dead = false;
-        taunt = false;
+        attack = false;
+        targetDead = false;
     }
 
     private void Dead()
@@ -97,17 +100,27 @@ public class ZombieLocomotion : MonoBehaviour
         dead = true;
     }
 
-    private void Taunt()
+    private void Attack()
     {
-        taunt = true;
+        attack = true;
     }
 
-    private IEnumerator ITaunt()
+    private void StopAttack()
     {
-        anim.SetBool("Stop", false);
-        anim.SetTrigger("Taunt");
-        anim.SetBool("Stop", true);
+        attack = false;
+        targetDead = true;
+        StopCoroutine(IAttack());
+        anim.ResetTrigger("Attack");
+    }
+
+    private IEnumerator IAttack()
+    {
+        attack = false;
+        anim.SetTrigger("Attack");
+        anim.Play("root|Zombie_Attack", -1);
+        ZombieAttack.Invoke();
         yield return new WaitForSeconds(3f);
+        attack = true;
     }
 
 }

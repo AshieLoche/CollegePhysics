@@ -14,6 +14,10 @@ public class AudioController : MonoBehaviour
     [SerializeField] private List<AudioClip> _squashFly;
     [SerializeField] private List<AudioClip> _peaFires;
     [SerializeField] private List<AudioClip> _peaHits;
+    [SerializeField] private List<AudioClip> _zombieAttacks;
+    [SerializeField] private AudioClip _zombieGulp;
+    [SerializeField] private List<AudioClip> _zombieDeaths;
+    [SerializeField] private List<AudioClip> _gameStates;
 
     private int _bmIndex;
     private int _previousBMIndex;
@@ -23,10 +27,13 @@ public class AudioController : MonoBehaviour
     private void Start()
     {
         ZombieLocomotion.Walk.AddListener(ZombieWalk);
+        ZombieLocomotion.ZombieAttack.AddListener(ZombieAttack);
+        ZombieDeath.DeathState.AddListener(ZombieDead);
         UIManager.Alert.AddListener(SquashAlert);
         SquashLocomotion.Fly.AddListener(SquashFly);
         PeaFire.FirePea.AddListener(FirePea);
         PeaHit.HitPea.AddListener(HitPea);
+        SunflowerDeath.DeathState.AddListener(ZombieGulp);
     }
 
     private void Update()
@@ -129,17 +136,60 @@ public class AudioController : MonoBehaviour
     {
         AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Pea Hit");
         AudioSource soundEffect2 = _soundEffects.Find((value) => value.name == "Pea Hit 2");
-        List<AudioClip> _regularPeaHits = _peaHits.FindAll((value) => value.name.Contains("splat"));
-        AudioClip _frozenPeaHit = _peaHits.Find((value) => value.name == "frozen");
+        List<AudioClip> regularPeaHits = _peaHits.FindAll((value) => value.name.Contains("splat"));
+        AudioClip frozenPeaHit = _peaHits.Find((value) => value.name == "frozen");
 
-        soundEffect.clip = _regularPeaHits[Random.Range(0, _regularPeaHits.Count)];
+        soundEffect.clip = regularPeaHits[Random.Range(0, regularPeaHits.Count)];
         soundEffect.Play();
 
         if (status.Contains("Snow"))
         {
-            soundEffect2.clip = _frozenPeaHit;
+            soundEffect2.clip = frozenPeaHit;
             soundEffect2.Play();
         }
+    }
+
+    private void ZombieAttack()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Attack");
+        soundEffect.clip = _zombieAttacks[Random.Range(0, _zombieAttacks.Count)];
+        soundEffect.Play();
+    }
+
+    private void ZombieGulp()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Gulp");
+        soundEffect.clip = _zombieGulp;
+        soundEffect.Play();
+
+        StartCoroutine(ILose(soundEffect));
+    }
+
+    private void ZombieDead()
+    {
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Zombie Death");
+        soundEffect.clip = _zombieDeaths[Random.Range(0, _zombieDeaths.Count)];
+        soundEffect.Play();
+
+        StartCoroutine(IWin(soundEffect));
+    }
+
+    private IEnumerator ILose(AudioSource previousSoundEffect)
+    {
+        yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
+
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
+        soundEffect.clip = _gameStates.Find((value) => value.name.Contains("lose"));
+        soundEffect.Play();
+    }
+
+    private IEnumerator IWin(AudioSource previousSoundEffect)
+    {
+        yield return new WaitUntil(() => previousSoundEffect.time >= previousSoundEffect.clip.length);
+
+        AudioSource soundEffect = _soundEffects.Find((value) => value.name == "Game State");
+        soundEffect.clip = _gameStates.Find((value) => value.name.Contains("win"));
+        soundEffect.Play();
     }
 
     private AudioClip ReverseClip(AudioClip clip)

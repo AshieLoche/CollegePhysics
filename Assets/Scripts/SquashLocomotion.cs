@@ -14,7 +14,7 @@ public class SquashLocomotion : MonoBehaviour
 
     public static UnityEvent InPeak = new UnityEvent();
     public static UnityEvent DescentThreeQuarters = new UnityEvent();
-    public static UnityEvent Taunt = new UnityEvent();
+    public static UnityEvent Attack = new UnityEvent();
     public static UnityEvent<string> Fly = new UnityEvent<string>();
     public static UnityEvent<bool> DisplayTitleUI = new UnityEvent<bool>();
     public static UnityEvent<float> ResetUI = new UnityEvent<float>();
@@ -108,7 +108,7 @@ public class SquashLocomotion : MonoBehaviour
                 Fly.Invoke("Landing");
                 startCount = false;
                 inPeak = false;
-                Taunt.Invoke();
+                Attack.Invoke();
                 DisplayTitleUI.Invoke(true);
             }
         }
